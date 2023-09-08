@@ -376,6 +376,13 @@ ___TEMPLATE_PARAMETERS___
           }
         ]
       }
+    ],
+    "enablingConditions": [
+      {
+        "paramName": "type",
+        "paramValue": "identify",
+        "type": "NOT_EQUALS"
+      }
     ]
   },
   {
@@ -420,7 +427,9 @@ const logToConsole = require('logToConsole');
 const getRequestHeader = require('getRequestHeader');
 const makeTableMap = require('makeTableMap');
 const Promise = require('Promise');
-const getRequestQueryParameter = require('getRequestQueryParameter');
+const parseUrl = require('parseUrl');
+const getAllEventData = require('getAllEventData');
+const decodeUriComponent = require('decodeUriComponent');
 
 const isLoggingEnabled = determinateIsLoggingEnabled();
 const traceId = isLoggingEnabled ? getRequestHeader('trace-id') : undefined;
@@ -458,14 +467,18 @@ identify(data.type === 'identify')
 
 function identify(force) {
   return Promise.create((resolve, reject) => {
-    return resolve('test');
     if (!force) {
-      let contactId = getRequestQueryParameter('vtid');
-      if (contactId) {
-        storeCookie('_vaI', contactId);
-        return resolve(contactId);
+      const eventData = getAllEventData();
+      const url = eventData.page_location || getRequestHeader('referer');
+      if (url) {
+        const urlParsed = parseUrl(url);
+        if (urlParsed && urlParsed.searchParams.vtid) {
+          const newContactId = decodeUriComponent(urlParsed.searchParams.vtid);
+          storeCookie('_vaI', newContactId);
+          return resolve(newContactId);
+        }
       }
-      contactId = getCookieValues('_vaI')[0];
+      const contactId = getCookieValues('_vaI')[0];
       if (contactId) {
         return resolve(contactId);
       }
@@ -701,6 +714,21 @@ ___SERVER_PERMISSIONS___
                     "string": "trace-id"
                   }
                 ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "headerName"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "referer"
+                  }
+                ]
               }
             ]
           }
@@ -863,6 +891,27 @@ ___SERVER_PERMISSIONS___
                 ]
               }
             ]
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "read_event_data",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "eventDataAccess",
+          "value": {
+            "type": 1,
+            "string": "any"
           }
         }
       ]

@@ -69,6 +69,70 @@ function identify(force) {
       return reject();
     }
 
+    getContactId(email)
+      .then(resolve)
+      .catch(() => {
+        createContact(email).then(resolve).catch(reject);
+      });
+  });
+}
+
+function getContactId(email) {
+  return Promise.create((resolve, reject) => {
+    const requestUrl = data.baseURL + '/api/v2/contacts/id?email=' + email;
+    if (isLoggingEnabled) {
+      logToConsole(
+        JSON.stringify({
+          Name: 'Voyado',
+          Type: 'Request',
+          TraceId: traceId,
+          EventName: 'GetContactId',
+          RequestMethod: 'GET',
+          RequestUrl: requestUrl,
+        })
+      );
+    }
+    sendHttpRequest(
+      requestUrl,
+      (statusCode, headers, body) => {
+        if (isLoggingEnabled) {
+          logToConsole(
+            JSON.stringify({
+              Name: 'Voyado',
+              Type: 'Response',
+              TraceId: traceId,
+              EventName: 'GetContactId',
+              ResponseStatusCode: statusCode,
+              ResponseHeaders: headers,
+              ResponseBody: body,
+            })
+          );
+        }
+        if (statusCode >= 200 && statusCode < 300) {
+          storeCookie('_vaI', body);
+          resolve(body);
+        } else if (statusCode === 409) {
+          const data = JSON.parse(body);
+          if (
+            data &&
+            data.multipleMatchesFound &&
+            data.multipleMatchesFound.length
+          ) {
+            resolve(data.multipleMatchesFound[0]);
+          } else {
+            reject();
+          }
+        } else {
+          reject();
+        }
+      },
+      { headers: { apikey: data.apikey } }
+    );
+  });
+}
+
+function createContact(email) {
+  return Promise.create((resolve, reject) => {
     const requestUrl = data.baseURL + '/api/v2/contacts';
 
     if (isLoggingEnabled) {
@@ -77,7 +141,7 @@ function identify(force) {
           Name: 'Voyado',
           Type: 'Request',
           TraceId: traceId,
-          EventName: 'Identify',
+          EventName: 'CreateContact',
           RequestMethod: 'POST',
           RequestUrl: requestUrl,
         })
@@ -93,7 +157,7 @@ function identify(force) {
               Name: 'Voyado',
               Type: 'Response',
               TraceId: traceId,
-              EventName: 'Identify',
+              EventName: 'CreateContact',
               ResponseStatusCode: statusCode,
               ResponseHeaders: headers,
               ResponseBody: body,

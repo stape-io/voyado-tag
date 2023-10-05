@@ -1,5 +1,7 @@
 homepage: 'https://stape.io/'
 versions:
+  - sha: 070d503ef32350e2e24215332ee66e13c33c5468
+    changeNotes: Fix contact id.
   - sha: 06678a152ad5c93497a04e0b162738df6721b506
     changeNotes: Added get contact id.
   - sha: e021e3d9159844ebf496e09351024d723489b319

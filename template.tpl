@@ -430,6 +430,7 @@ const Promise = require('Promise');
 const parseUrl = require('parseUrl');
 const getAllEventData = require('getAllEventData');
 const decodeUriComponent = require('decodeUriComponent');
+const createRegex = require('createRegex');
 
 const isLoggingEnabled = determinateIsLoggingEnabled();
 const traceId = isLoggingEnabled ? getRequestHeader('trace-id') : undefined;
@@ -529,8 +530,9 @@ function getContactId(email) {
           );
         }
         if (statusCode >= 200 && statusCode < 300) {
-          storeCookie('_vaI', body);
-          resolve(body);
+          const contactId = fixContactId(body);
+          storeCookie('_vaI', contactId);
+          resolve(contactId);
         } else if (statusCode === 409) {
           const data = JSON.parse(body);
           if (
@@ -585,7 +587,7 @@ function createContact(email) {
           );
         }
         if (statusCode >= 200 && statusCode < 300) {
-          const contactId = JSON.parse(body).id;
+          const contactId = fixContactId(JSON.parse(body).id);
           storeCookie('_vaI', contactId);
           resolve(contactId);
         } else {
@@ -605,6 +607,11 @@ function createContact(email) {
       })
     );
   });
+}
+
+function fixContactId(contactId) {
+  const regex = createRegex('"', 'g');
+  return contactId.replace(regex, '');
 }
 
 function sendEvent(path, eventName, voyadoEventData) {

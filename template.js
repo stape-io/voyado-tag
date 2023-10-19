@@ -117,10 +117,11 @@ function getContactId(email) {
           const data = JSON.parse(body);
           if (
             data &&
-            data.multipleMatchesFound &&
-            data.multipleMatchesFound.length
+            data.messageDetails &&
+            data.messageDetails.multipleMatchesFound &&
+            data.messageDetails.multipleMatchesFound.length
           ) {
-            resolve(data.multipleMatchesFound[0]);
+            resolve(data.messageDetails.multipleMatchesFound[0]);
           } else {
             reject();
           }

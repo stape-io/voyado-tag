@@ -430,6 +430,7 @@ const Promise = require('Promise');
 const parseUrl = require('parseUrl');
 const getAllEventData = require('getAllEventData');
 const decodeUriComponent = require('decodeUriComponent');
+const encodeUriComponent = require('encodeUriComponent');
 const createRegex = require('createRegex');
 
 const isLoggingEnabled = determinateIsLoggingEnabled();
@@ -500,7 +501,7 @@ function identify(force) {
 
 function getContactId(email) {
   return Promise.create((resolve, reject) => {
-    const requestUrl = data.baseURL + '/api/v2/contacts/id?email=' + email;
+    const requestUrl = data.baseURL + '/api/v2/contacts/id?email=' + encodeUriComponent(email);
     if (isLoggingEnabled) {
       logToConsole(
         JSON.stringify({

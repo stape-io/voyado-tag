@@ -1,4 +1,5 @@
 homepage: 'https://stape.io/'
+documentation: 'https://github.com/stape-io/voyado-tag'
 versions:
   - sha: 53f2663246a432e7ede60506fcd39400f3808208
     changeNotes: Handle messageDetails for conflict response.

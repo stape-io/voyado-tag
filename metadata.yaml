@@ -1,6 +1,8 @@
 homepage: 'https://stape.io/'
 documentation: 'https://github.com/stape-io/voyado-tag'
 versions:
+  - sha: cb1fb7370e6c06a1df0ca7980c5d1ba9ca6db491
+    changeNotes: Add consent section.
   - sha: 53f2663246a432e7ede60506fcd39400f3808208
     changeNotes: Handle messageDetails for conflict response.
   - sha: 070d503ef32350e2e24215332ee66e13c33c5468

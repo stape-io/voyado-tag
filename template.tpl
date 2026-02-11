@@ -35,78 +35,86 @@ ___TEMPLATE_PARAMETERS___
 
 [
   {
-    "type": "RADIO",
-    "name": "type",
-    "displayName": "Type",
-    "radioItems": [
+    "type": "GROUP",
+    "name": "configGroup",
+    "displayName": "",
+    "groupStyle": "NO_ZIPPY",
+    "subParams": [
       {
-        "value": "trackCartChanges",
-        "displayValue": "Track cart changes"
+        "type": "RADIO",
+        "name": "type",
+        "displayName": "Type",
+        "radioItems": [
+          {
+            "value": "trackCartChanges",
+            "displayValue": "Track cart changes"
+          },
+          {
+            "value": "trackProductView",
+            "displayValue": "Track product view"
+          },
+          {
+            "value": "trackPurchase",
+            "displayValue": "Track purchase"
+          },
+          {
+            "value": "identify",
+            "displayValue": "Identify the user"
+          }
+        ],
+        "simpleValueType": true,
+        "defaultValue": "trackCartChanges"
       },
       {
-        "value": "trackProductView",
-        "displayValue": "Track product view"
-      },
-      {
-        "value": "trackPurchase",
-        "displayValue": "Track purchase"
-      },
-      {
-        "value": "identify",
-        "displayValue": "Identify the user"
-      }
-    ],
-    "simpleValueType": true,
-    "defaultValue": "trackCartChanges"
-  },
-  {
-    "type": "TEXT",
-    "name": "baseURL",
-    "displayName": "Base URL",
-    "simpleValueType": true,
-    "help": "Base URL in the following format: https://[client].voyado.com \u003cbr/\u003e\u003ca href\u003d\"https://developer.voyado.com/en/api/api-urls.html\"\u003eRead more\u003c/a\u003e",
-    "valueValidators": [
-      {
-        "type": "NON_EMPTY"
-      },
-      {
-        "type": "REGEX",
-        "args": [
-          "^https:\\/\\/.*\\.voyado\\.com$"
+        "type": "TEXT",
+        "name": "baseURL",
+        "displayName": "Base URL",
+        "simpleValueType": true,
+        "help": "Base URL in the following format: https://[client].voyado.com \u003cbr/\u003e\u003ca href\u003d\"https://developer.voyado.com/en/api/api-urls.html\"\u003eRead more\u003c/a\u003e",
+        "valueValidators": [
+          {
+            "type": "NON_EMPTY"
+          },
+          {
+            "type": "REGEX",
+            "args": [
+              "^https:\\/\\/.*\\.voyado\\.com$"
+            ]
+          }
         ]
+      },
+      {
+        "type": "TEXT",
+        "name": "apikey",
+        "displayName": "API Key",
+        "simpleValueType": true,
+        "valueValidators": [
+          {
+            "type": "NON_EMPTY"
+          }
+        ],
+        "help": "Voyado API key \u003cbr/\u003e\u003ca href\u003d\"https://developer.voyado.com/en/api/api-authentication.html\"\u003eRead more\u003c/a\u003e"
+      },
+      {
+        "type": "TEXT",
+        "name": "email",
+        "displayName": "Email",
+        "simpleValueType": true,
+        "alwaysInSummary": false,
+        "help": "Email of the user"
+      },
+      {
+        "type": "CHECKBOX",
+        "name": "useOptimisticScenario",
+        "checkboxText": "Use Optimistic Scenario",
+        "simpleValueType": true,
+        "help": "The tag will call gtmOnSuccess() without waiting for a response from the API"
       }
     ]
   },
   {
-    "type": "TEXT",
-    "name": "apikey",
-    "displayName": "API Key",
-    "simpleValueType": true,
-    "valueValidators": [
-      {
-        "type": "NON_EMPTY"
-      }
-    ],
-    "help": "Voyado API key \u003cbr/\u003e\u003ca href\u003d\"https://developer.voyado.com/en/api/api-authentication.html\"\u003eRead more\u003c/a\u003e"
-  },
-  {
-    "type": "TEXT",
-    "name": "email",
-    "displayName": "Email",
-    "simpleValueType": true,
-    "alwaysInSummary": false,
-    "help": "Email of the user"
-  },
-  {
-    "type": "CHECKBOX",
-    "name": "useOptimisticScenario",
-    "checkboxText": "Use Optimistic Scenario",
-    "simpleValueType": true,
-    "help": "The tag will call gtmOnSuccess() without waiting for a response from the API"
-  },
-  {
     "type": "GROUP",
-    "name": "parameters",
+    "name": "parametersGroup",
     "displayName": "Parameters",
     "groupStyle": "ZIPPY_CLOSED",
     "subParams": [
@@ -386,6 +394,31 @@ ___TEMPLATE_PARAMETERS___
     ]
   },
   {
+    "type": "GROUP",
+    "name": "tagExecutionConsentSettingsGroup",
+    "displayName": "Tag Execution Consent Settings",
+    "groupStyle": "ZIPPY_CLOSED",
+    "subParams": [
+      {
+        "type": "RADIO",
+        "name": "adStorageConsent",
+        "radioItems": [
+          {
+            "value": "optional",
+            "displayValue": "Send data always"
+          },
+          {
+            "value": "required",
+            "displayValue": "Send data in case marketing consent given",
+            "help": "Aborts the tag execution if marketing consent (\u003ci\u003ead_storage\u003c/i\u003e Google Consent Mode or Stape\u0027s Data Tag parameter) is not given."
+          }
+        ],
+        "simpleValueType": true,
+        "defaultValue": "optional"
+      }
+    ]
+  },
+  {
     "displayName": "Logs Settings",
     "name": "logsGroup",
     "groupStyle": "ZIPPY_CLOSED",
@@ -418,20 +451,29 @@ ___TEMPLATE_PARAMETERS___
 
 ___SANDBOXED_JS_FOR_SERVER___
 
-const sendHttpRequest = require('sendHttpRequest');
-const JSON = require('JSON');
-const getCookieValues = require('getCookieValues');
-const setCookie = require('setCookie');
-const getContainerVersion = require('getContainerVersion');
-const logToConsole = require('logToConsole');
-const getRequestHeader = require('getRequestHeader');
-const makeTableMap = require('makeTableMap');
-const Promise = require('Promise');
-const parseUrl = require('parseUrl');
-const getAllEventData = require('getAllEventData');
+const createRegex = require('createRegex');
 const decodeUriComponent = require('decodeUriComponent');
 const encodeUriComponent = require('encodeUriComponent');
-const createRegex = require('createRegex');
+const getAllEventData = require('getAllEventData');
+const getCookieValues = require('getCookieValues');
+const getContainerVersion = require('getContainerVersion');
+const getRequestHeader = require('getRequestHeader');
+const JSON = require('JSON');
+const logToConsole = require('logToConsole');
+const makeTableMap = require('makeTableMap');
+const parseUrl = require('parseUrl');
+const Promise = require('Promise');
+const sendHttpRequest = require('sendHttpRequest');
+const setCookie = require('setCookie');
+
+/*==============================================================================
+==============================================================================*/
+
+const eventData = getAllEventData();
+
+if (!isConsentGivenOrNotRequired(data, eventData)) {
+  return data.gtmOnSuccess();
+}
 
 const isLoggingEnabled = determinateIsLoggingEnabled();
 const traceId = isLoggingEnabled ? getRequestHeader('trace-id') : undefined;
@@ -439,9 +481,7 @@ const traceId = isLoggingEnabled ? getRequestHeader('trace-id') : undefined;
 identify(data.type === 'identify')
   .then((contactId) => {
     if (data.type === 'trackCartChanges') {
-      const cartModel = data.cartModel
-        ? makeTableMap(data.cartModel, 'property', 'value')
-        : {};
+      const cartModel = data.cartModel ? makeTableMap(data.cartModel, 'property', 'value') : {};
       cartModel.ContactId = contactId;
       sendEvent('/tracking/carts', 'AddToCart', cartModel);
     } else if (data.type === 'trackProductView') {
@@ -451,12 +491,10 @@ identify(data.type === 'identify')
       productViewApiModel.ContactId = contactId;
       sendEvent('/tracking/productview', 'ProductView', productViewApiModel);
     } else if (data.type === 'trackPurchase') {
-      const orderModel = data.orderModel
-        ? makeTableMap(data.orderModel, 'property', 'value')
-        : {};
+      const orderModel = data.orderModel ? makeTableMap(data.orderModel, 'property', 'value') : {};
       orderModel.contact = {
         matchKey: contactId,
-        matchKeyType: 'ContactId',
+        matchKeyType: 'ContactId'
       };
       sendEvent('/orders', 'Purchase', orderModel);
     } else {
@@ -499,6 +537,10 @@ function identify(force) {
   });
 }
 
+/*==============================================================================
+  Vendor related functions
+==============================================================================*/
+
 function getContactId(email) {
   return Promise.create((resolve, reject) => {
     const requestUrl = data.baseURL + '/api/v2/contacts/id?email=' + encodeUriComponent(email);
@@ -510,7 +552,7 @@ function getContactId(email) {
           TraceId: traceId,
           EventName: 'GetContactId',
           RequestMethod: 'GET',
-          RequestUrl: requestUrl,
+          RequestUrl: requestUrl
         })
       );
     }
@@ -526,7 +568,7 @@ function getContactId(email) {
               EventName: 'GetContactId',
               ResponseStatusCode: statusCode,
               ResponseHeaders: headers,
-              ResponseBody: body,
+              ResponseBody: body
             })
           );
         }
@@ -567,7 +609,7 @@ function createContact(email) {
           TraceId: traceId,
           EventName: 'CreateContact',
           RequestMethod: 'POST',
-          RequestUrl: requestUrl,
+          RequestUrl: requestUrl
         })
       );
     }
@@ -584,7 +626,7 @@ function createContact(email) {
               EventName: 'CreateContact',
               ResponseStatusCode: statusCode,
               ResponseHeaders: headers,
-              ResponseBody: body,
+              ResponseBody: body
             })
           );
         }
@@ -600,12 +642,12 @@ function createContact(email) {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
-          apikey: data.apikey,
+          apikey: data.apikey
         },
-        method: 'POST',
+        method: 'POST'
       },
       JSON.stringify({
-        email: email,
+        email: email
       })
     );
   });
@@ -628,7 +670,7 @@ function sendEvent(path, eventName, voyadoEventData) {
         EventName: data.type,
         RequestMethod: 'POST',
         RequestUrl: url,
-        RequestBody: voyadoEventData,
+        RequestBody: voyadoEventData
       })
     );
   }
@@ -644,7 +686,7 @@ function sendEvent(path, eventName, voyadoEventData) {
           EventName: eventName,
           ResponseStatusCode: statusCode,
           ResponseHeaders: headers,
-          ResponseBody: body,
+          ResponseBody: body
         })
       );
 
@@ -660,9 +702,9 @@ function sendEvent(path, eventName, voyadoEventData) {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        apikey: data.apikey,
+        apikey: data.apikey
       },
-      method: 'POST',
+      method: 'POST'
     },
     JSON.stringify(voyadoEventData)
   );
@@ -679,8 +721,19 @@ function storeCookie(name, value) {
     samesite: 'Lax',
     secure: true,
     'max-age': 63072000, // 2 years
-    httpOnly: false,
+    httpOnly: false
   });
+}
+
+/*==============================================================================
+  Helpers
+==============================================================================*/
+
+function isConsentGivenOrNotRequired(data, eventData) {
+  if (data.adStorageConsent !== 'required') return true;
+  if (eventData.consent_state) return !!eventData.consent_state.ad_storage;
+  const xGaGcs = eventData['x-ga-gcs'] || ''; // x-ga-gcs is a string like "G110"
+  return xGaGcs[2] === '1';
 }
 
 function determinateIsLoggingEnabled() {

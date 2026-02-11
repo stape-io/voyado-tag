@@ -1,17 +1,26 @@
-const sendHttpRequest = require('sendHttpRequest');
-const JSON = require('JSON');
-const getCookieValues = require('getCookieValues');
-const setCookie = require('setCookie');
-const getContainerVersion = require('getContainerVersion');
-const logToConsole = require('logToConsole');
-const getRequestHeader = require('getRequestHeader');
-const makeTableMap = require('makeTableMap');
-const Promise = require('Promise');
-const parseUrl = require('parseUrl');
-const getAllEventData = require('getAllEventData');
+const createRegex = require('createRegex');
 const decodeUriComponent = require('decodeUriComponent');
 const encodeUriComponent = require('encodeUriComponent');
-const createRegex = require('createRegex');
+const getAllEventData = require('getAllEventData');
+const getCookieValues = require('getCookieValues');
+const getContainerVersion = require('getContainerVersion');
+const getRequestHeader = require('getRequestHeader');
+const JSON = require('JSON');
+const logToConsole = require('logToConsole');
+const makeTableMap = require('makeTableMap');
+const parseUrl = require('parseUrl');
+const Promise = require('Promise');
+const sendHttpRequest = require('sendHttpRequest');
+const setCookie = require('setCookie');
+
+/*==============================================================================
+==============================================================================*/
+
+const eventData = getAllEventData();
+
+if (!isConsentGivenOrNotRequired(data, eventData)) {
+  return data.gtmOnSuccess();
+}
 
 const isLoggingEnabled = determinateIsLoggingEnabled();
 const traceId = isLoggingEnabled ? getRequestHeader('trace-id') : undefined;
@@ -19,9 +28,7 @@ const traceId = isLoggingEnabled ? getRequestHeader('trace-id') : undefined;
 identify(data.type === 'identify')
   .then((contactId) => {
     if (data.type === 'trackCartChanges') {
-      const cartModel = data.cartModel
-        ? makeTableMap(data.cartModel, 'property', 'value')
-        : {};
+      const cartModel = data.cartModel ? makeTableMap(data.cartModel, 'property', 'value') : {};
       cartModel.ContactId = contactId;
       sendEvent('/tracking/carts', 'AddToCart', cartModel);
     } else if (data.type === 'trackProductView') {
@@ -31,12 +38,10 @@ identify(data.type === 'identify')
       productViewApiModel.ContactId = contactId;
       sendEvent('/tracking/productview', 'ProductView', productViewApiModel);
     } else if (data.type === 'trackPurchase') {
-      const orderModel = data.orderModel
-        ? makeTableMap(data.orderModel, 'property', 'value')
-        : {};
+      const orderModel = data.orderModel ? makeTableMap(data.orderModel, 'property', 'value') : {};
       orderModel.contact = {
         matchKey: contactId,
-        matchKeyType: 'ContactId',
+        matchKeyType: 'ContactId'
       };
       sendEvent('/orders', 'Purchase', orderModel);
     } else {
@@ -79,6 +84,10 @@ function identify(force) {
   });
 }
 
+/*==============================================================================
+  Vendor related functions
+==============================================================================*/
+
 function getContactId(email) {
   return Promise.create((resolve, reject) => {
     const requestUrl = data.baseURL + '/api/v2/contacts/id?email=' + encodeUriComponent(email);
@@ -90,7 +99,7 @@ function getContactId(email) {
           TraceId: traceId,
           EventName: 'GetContactId',
           RequestMethod: 'GET',
-          RequestUrl: requestUrl,
+          RequestUrl: requestUrl
         })
       );
     }
@@ -106,7 +115,7 @@ function getContactId(email) {
               EventName: 'GetContactId',
               ResponseStatusCode: statusCode,
               ResponseHeaders: headers,
-              ResponseBody: body,
+              ResponseBody: body
             })
           );
         }
@@ -147,7 +156,7 @@ function createContact(email) {
           TraceId: traceId,
           EventName: 'CreateContact',
           RequestMethod: 'POST',
-          RequestUrl: requestUrl,
+          RequestUrl: requestUrl
         })
       );
     }
@@ -164,7 +173,7 @@ function createContact(email) {
               EventName: 'CreateContact',
               ResponseStatusCode: statusCode,
               ResponseHeaders: headers,
-              ResponseBody: body,
+              ResponseBody: body
             })
           );
         }
@@ -180,12 +189,12 @@ function createContact(email) {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
-          apikey: data.apikey,
+          apikey: data.apikey
         },
-        method: 'POST',
+        method: 'POST'
       },
       JSON.stringify({
-        email: email,
+        email: email
       })
     );
   });
@@ -208,7 +217,7 @@ function sendEvent(path, eventName, voyadoEventData) {
         EventName: data.type,
         RequestMethod: 'POST',
         RequestUrl: url,
-        RequestBody: voyadoEventData,
+        RequestBody: voyadoEventData
       })
     );
   }
@@ -224,7 +233,7 @@ function sendEvent(path, eventName, voyadoEventData) {
           EventName: eventName,
           ResponseStatusCode: statusCode,
           ResponseHeaders: headers,
-          ResponseBody: body,
+          ResponseBody: body
         })
       );
 
@@ -240,9 +249,9 @@ function sendEvent(path, eventName, voyadoEventData) {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        apikey: data.apikey,
+        apikey: data.apikey
       },
-      method: 'POST',
+      method: 'POST'
     },
     JSON.stringify(voyadoEventData)
   );
@@ -259,8 +268,19 @@ function storeCookie(name, value) {
     samesite: 'Lax',
     secure: true,
     'max-age': 63072000, // 2 years
-    httpOnly: false,
+    httpOnly: false
   });
+}
+
+/*==============================================================================
+  Helpers
+==============================================================================*/
+
+function isConsentGivenOrNotRequired(data, eventData) {
+  if (data.adStorageConsent !== 'required') return true;
+  if (eventData.consent_state) return !!eventData.consent_state.ad_storage;
+  const xGaGcs = eventData['x-ga-gcs'] || ''; // x-ga-gcs is a string like "G110"
+  return xGaGcs[2] === '1';
 }
 
 function determinateIsLoggingEnabled() {

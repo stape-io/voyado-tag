@@ -14,14 +14,15 @@ The Voyado platform now [supports server-side cookies](https://developer.voyado.
 - API key - your [Voyado Engage API key](https://developer.voyado.com/en/api/api-authentication.html).
 - Email - email of the user.
 
-You can also click on the checkbox “Use Optimistic Scenario” and the tag will call gtmOnSuccess() without waiting for a response from the API. 
+You can also click on the checkbox “Use Optimistic Scenario” and the tag will call gtmOnSuccess() without waiting for a response from the API.
 
-## Useful link: 
-- https://stape.io/blog/server-to-server-voyado-tracking-using-server-google-tag-manager 
+## Useful Resources
+
+- https://stape.io/blog/server-to-server-voyado-tracking-using-server-google-tag-manager
 
 ## Open Source
 
-Voyado Tag for GTM Server Side is developing and maintained by [Stape Team](https://stape.io/) under the Apache 2.0 license.
+Voyado Tag for GTM Server Side is developed and maintained by [Stape Team](https://stape.io/) under the Apache 2.0 license.
 
 ### GTM Gallery Status
 🟢 [Listed](https://tagmanager.google.com/gallery/#/owners/stape-io/templates/voyado-tag)

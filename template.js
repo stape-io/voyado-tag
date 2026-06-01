@@ -3,10 +3,8 @@ const decodeUriComponent = require('decodeUriComponent');
 const encodeUriComponent = require('encodeUriComponent');
 const getAllEventData = require('getAllEventData');
 const getCookieValues = require('getCookieValues');
-const getContainerVersion = require('getContainerVersion');
 const getRequestHeader = require('getRequestHeader');
 const JSON = require('JSON');
-const logToConsole = require('logToConsole');
 const makeTableMap = require('makeTableMap');
 const parseUrl = require('parseUrl');
 const Promise = require('Promise');
@@ -22,28 +20,25 @@ if (!isConsentGivenOrNotRequired(data, eventData)) {
   return data.gtmOnSuccess();
 }
 
-const isLoggingEnabled = determinateIsLoggingEnabled();
-const traceId = isLoggingEnabled ? getRequestHeader('trace-id') : undefined;
-
 identify(data.type === 'identify')
   .then((contactId) => {
     if (data.type === 'trackCartChanges') {
       const cartModel = data.cartModel ? makeTableMap(data.cartModel, 'property', 'value') : {};
       cartModel.ContactId = contactId;
-      sendEvent('/tracking/carts', 'AddToCart', cartModel);
+      sendEvent('/tracking/carts', cartModel);
     } else if (data.type === 'trackProductView') {
       const productViewApiModel = data.productViewApiModel
         ? makeTableMap(data.productViewApiModel, 'property', 'value')
         : {};
       productViewApiModel.ContactId = contactId;
-      sendEvent('/tracking/productview', 'ProductView', productViewApiModel);
+      sendEvent('/tracking/productview', productViewApiModel);
     } else if (data.type === 'trackPurchase') {
       const orderModel = data.orderModel ? makeTableMap(data.orderModel, 'property', 'value') : {};
       orderModel.contact = {
         matchKey: contactId,
         matchKeyType: 'ContactId'
       };
-      sendEvent('/orders', 'Purchase', orderModel);
+      sendEvent('/orders', orderModel);
     } else {
       data.gtmOnSuccess();
     }
@@ -91,34 +86,9 @@ function identify(force) {
 function getContactId(email) {
   return Promise.create((resolve, reject) => {
     const requestUrl = data.baseURL + '/api/v2/contacts/id?email=' + encodeUriComponent(email);
-    if (isLoggingEnabled) {
-      logToConsole(
-        JSON.stringify({
-          Name: 'Voyado',
-          Type: 'Request',
-          TraceId: traceId,
-          EventName: 'GetContactId',
-          RequestMethod: 'GET',
-          RequestUrl: requestUrl
-        })
-      );
-    }
     sendHttpRequest(
       requestUrl,
       (statusCode, headers, body) => {
-        if (isLoggingEnabled) {
-          logToConsole(
-            JSON.stringify({
-              Name: 'Voyado',
-              Type: 'Response',
-              TraceId: traceId,
-              EventName: 'GetContactId',
-              ResponseStatusCode: statusCode,
-              ResponseHeaders: headers,
-              ResponseBody: body
-            })
-          );
-        }
         if (statusCode >= 200 && statusCode < 300) {
           const contactId = fixContactId(body);
           storeCookie('_vaI', contactId);
@@ -147,36 +117,9 @@ function getContactId(email) {
 function createContact(email) {
   return Promise.create((resolve, reject) => {
     const requestUrl = data.baseURL + '/api/v2/contacts';
-
-    if (isLoggingEnabled) {
-      logToConsole(
-        JSON.stringify({
-          Name: 'Voyado',
-          Type: 'Request',
-          TraceId: traceId,
-          EventName: 'CreateContact',
-          RequestMethod: 'POST',
-          RequestUrl: requestUrl
-        })
-      );
-    }
-
     sendHttpRequest(
       requestUrl,
       (statusCode, headers, body) => {
-        if (isLoggingEnabled) {
-          logToConsole(
-            JSON.stringify({
-              Name: 'Voyado',
-              Type: 'Response',
-              TraceId: traceId,
-              EventName: 'CreateContact',
-              ResponseStatusCode: statusCode,
-              ResponseHeaders: headers,
-              ResponseBody: body
-            })
-          );
-        }
         if (statusCode >= 200 && statusCode < 300) {
           const contactId = fixContactId(JSON.parse(body).id);
           storeCookie('_vaI', contactId);
@@ -205,38 +148,11 @@ function fixContactId(contactId) {
   return contactId.replace(regex, '');
 }
 
-function sendEvent(path, eventName, voyadoEventData) {
+function sendEvent(path, voyadoEventData) {
   let url = data.baseURL + '/api/v2' + path;
-
-  if (isLoggingEnabled) {
-    logToConsole(
-      JSON.stringify({
-        Name: 'Voyado',
-        Type: 'Request',
-        TraceId: traceId,
-        EventName: data.type,
-        RequestMethod: 'POST',
-        RequestUrl: url,
-        RequestBody: voyadoEventData
-      })
-    );
-  }
-
   sendHttpRequest(
     url,
     (statusCode, headers, body) => {
-      logToConsole(
-        JSON.stringify({
-          Name: 'Voyado',
-          Type: 'Response',
-          TraceId: traceId,
-          EventName: eventName,
-          ResponseStatusCode: statusCode,
-          ResponseHeaders: headers,
-          ResponseBody: body
-        })
-      );
-
       if (!data.useOptimisticScenario) {
         if (statusCode >= 200 && statusCode < 300) {
           data.gtmOnSuccess();
@@ -281,26 +197,4 @@ function isConsentGivenOrNotRequired(data, eventData) {
   if (eventData.consent_state) return !!eventData.consent_state.ad_storage;
   const xGaGcs = eventData['x-ga-gcs'] || ''; // x-ga-gcs is a string like "G110"
   return xGaGcs[2] === '1';
-}
-
-function determinateIsLoggingEnabled() {
-  const containerVersion = getContainerVersion();
-  const isDebug = !!(
-    containerVersion &&
-    (containerVersion.debugMode || containerVersion.previewMode)
-  );
-
-  if (!data.logType) {
-    return isDebug;
-  }
-
-  if (data.logType === 'no') {
-    return false;
-  }
-
-  if (data.logType === 'debug') {
-    return isDebug;
-  }
-
-  return data.logType === 'always';
 }

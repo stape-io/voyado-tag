@@ -1,6 +1,8 @@
 homepage: 'https://stape.io/'
 documentation: 'https://github.com/stape-io/voyado-tag'
 versions:
+  - sha: 972d80f79f5f8de7c88dd87e74812f8aceda3183
+    changeNotes: API version update to v3.
   - sha: cbcdc12fc804ae5aff6c98d8415b6dcf4b8f5bbd
     changeNotes: Logging removal.
   - sha: cb1fb7370e6c06a1df0ca7980c5d1ba9ca6db491

@@ -13,7 +13,7 @@ const setCookie = require('setCookie');
 
 /*==============================================================================
 ==============================================================================*/
-
+const API_VERSION = 'v3';
 const eventData = getAllEventData();
 
 if (!isConsentGivenOrNotRequired(data, eventData)) {
@@ -25,13 +25,13 @@ identify(data.type === 'identify')
     if (data.type === 'trackCartChanges') {
       const cartModel = data.cartModel ? makeTableMap(data.cartModel, 'property', 'value') : {};
       cartModel.ContactId = contactId;
-      sendEvent('/tracking/carts', cartModel);
+      sendEvent('/tracking/carts', [cartModel]);
     } else if (data.type === 'trackProductView') {
       const productViewApiModel = data.productViewApiModel
         ? makeTableMap(data.productViewApiModel, 'property', 'value')
         : {};
       productViewApiModel.ContactId = contactId;
-      sendEvent('/tracking/productview', productViewApiModel);
+      sendEvent('/tracking/productviews', [productViewApiModel]);
     } else if (data.type === 'trackPurchase') {
       const orderModel = data.orderModel ? makeTableMap(data.orderModel, 'property', 'value') : {};
       orderModel.contact = {
@@ -85,7 +85,8 @@ function identify(force) {
 
 function getContactId(email) {
   return Promise.create((resolve, reject) => {
-    const requestUrl = data.baseURL + '/api/v2/contacts/id?email=' + encodeUriComponent(email);
+    const requestUrl =
+      data.baseURL + '/api/' + API_VERSION + '/contacts/id?email=' + encodeUriComponent(email);
     sendHttpRequest(
       requestUrl,
       (statusCode, headers, body) => {
@@ -94,7 +95,7 @@ function getContactId(email) {
           storeCookie('_vaI', contactId);
           resolve(contactId);
         } else if (statusCode === 409) {
-          const data = JSON.parse(body);
+          const data = JSON.parse(body || '{}');
           if (
             data &&
             data.messageDetails &&
@@ -116,12 +117,12 @@ function getContactId(email) {
 
 function createContact(email) {
   return Promise.create((resolve, reject) => {
-    const requestUrl = data.baseURL + '/api/v2/contacts';
+    const requestUrl = data.baseURL + '/api/' + API_VERSION + '/contacts';
     sendHttpRequest(
       requestUrl,
       (statusCode, headers, body) => {
         if (statusCode >= 200 && statusCode < 300) {
-          const contactId = fixContactId(JSON.parse(body).id);
+          const contactId = fixContactId(JSON.parse(body || '{}').id);
           storeCookie('_vaI', contactId);
           resolve(contactId);
         } else {
@@ -149,7 +150,7 @@ function fixContactId(contactId) {
 }
 
 function sendEvent(path, voyadoEventData) {
-  let url = data.baseURL + '/api/v2' + path;
+  let url = data.baseURL + '/api/' + API_VERSION + path;
   sendHttpRequest(
     url,
     (statusCode, headers, body) => {

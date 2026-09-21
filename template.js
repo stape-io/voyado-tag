@@ -13,6 +13,7 @@ const setCookie = require('setCookie');
 
 /*==============================================================================
 ==============================================================================*/
+
 const API_VERSION = 'v3';
 const eventData = getAllEventData();
 
@@ -33,7 +34,9 @@ identify(data.type === 'identify')
       productViewApiModel.ContactId = contactId;
       sendEvent('/tracking/productviews', [productViewApiModel]);
     } else if (data.type === 'trackPurchase') {
-      const orderModel = data.orderModel ? makeTableMap(data.orderModel, 'property', 'value') : {};
+      const orderModel = data.orderModel
+        ? mapOrderModelFields(makeTableMap(data.orderModel, 'property', 'value'))
+        : {};
       orderModel.contact = {
         matchKey: contactId,
         matchKeyType: 'ContactId'
@@ -147,6 +150,50 @@ function createContact(email) {
 function fixContactId(contactId) {
   const regex = createRegex('"', 'g');
   return contactId.replace(regex, '');
+}
+
+function mapOrderModelFields(orderModel) {
+  const ORDER_FIELD_MAP = {
+    orderNumber: 'orderId',
+    orderStatus: 'status',
+    createdDate: 'createdAt',
+    statusChangedDate: 'lastChangedAt',
+    storeId: 'externalStoreId',
+    currency: 'currencyCode',
+    totalGrossPrice: 'totalPrice',
+    shippingDate: 'delivery.deliveryDate',
+    totalTax: 'taxes.totalTax'
+  };
+  const REMOVED_FIELDS = {
+    paymentStatus: true,
+    language: true,
+    paymentMethods: true,
+    items: true,
+    freightFee: true,
+    handlingFee: true,
+    totalRoundOff: true,
+    exchangeRateToGroupCurrency: true,
+    extraData: true
+  };
+  const mapped = {};
+  for (const key in orderModel) {
+    if (orderModel.hasOwnProperty(key) && !REMOVED_FIELDS[key]) {
+      setNestedValue(mapped, ORDER_FIELD_MAP[key] || key, orderModel[key]);
+    }
+  }
+  return mapped;
+}
+
+function setNestedValue(target, path, value) {
+  const segments = path.split('.');
+  let current = target;
+  for (let i = 0; i < segments.length - 1; i++) {
+    if (!current[segments[i]]) {
+      current[segments[i]] = {};
+    }
+    current = current[segments[i]];
+  }
+  current[segments[segments.length - 1]] = value;
 }
 
 function sendEvent(path, voyadoEventData) {

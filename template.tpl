@@ -70,7 +70,7 @@ ___TEMPLATE_PARAMETERS___
         "name": "baseURL",
         "displayName": "Base URL",
         "simpleValueType": true,
-        "help": "Base URL in the following format: https://[client].voyado.com \u003cbr/\u003e\u003ca href\u003d\"https://developer.voyado.com/en/api/api-urls.html\"\u003eRead more\u003c/a\u003e",
+        "help": "Base URL in the following format:\u003cbr/\u003e\u003ccode\u003ehttps://[client].voyado.com\u003c/code\u003e\u003cbr/\u003e\u003ca href\u003d\"https://developer.voyado.com/docs/api/the-engage-api#base-url\"\u003eRead more\u003c/a\u003e",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -93,7 +93,7 @@ ___TEMPLATE_PARAMETERS___
             "type": "NON_EMPTY"
           }
         ],
-        "help": "Voyado API key \u003cbr/\u003e\u003ca href\u003d\"https://developer.voyado.com/en/api/api-authentication.html\"\u003eRead more\u003c/a\u003e"
+        "help": "Voyado API key.\u003cbr/\u003e\u003ca href\u003d\"https://developer.voyado.com/docs/onsite/api-integration#configuration\"\u003eRead more\u003c/a\u003e"
       },
       {
         "type": "TEXT",
@@ -148,6 +148,18 @@ ___TEMPLATE_PARAMETERS___
               {
                 "value": "Items",
                 "displayValue": "Items"
+              },
+              {
+                "value": "SessionId",
+                "displayValue": "SessionId"
+              },
+              {
+                "value": "NewSession",
+                "displayValue": "NewSession"
+              },
+              {
+                "value": "ExternalReferrer",
+                "displayValue": "ExternalReferrer"
               }
             ],
             "isUnique": true,
@@ -169,7 +181,7 @@ ___TEMPLATE_PARAMETERS___
             ]
           }
         ],
-        "help": "\u003cb\u003eContactId\u003c/b\u003e will be provided automaticaly.\nRegister an update to a specific cart for a given contact. Should be the latest update of the cart. \u003ca href\u003d\"https://voyadodemoecom.voyado.com/api/v2/ui/index#/tracking/Cart_RegisterCart\"\u003eDocumentation reference\u003c/a\u003e",
+        "help": "\u003cb\u003eContactId\u003c/b\u003e will be provided automatically.\u003cbr/\u003eRegister an update to a specific cart for a given contact. Should be the latest update of the cart.\u003cbr/\u003e\u003ca href\u003d\"https://voyadodemoecom.voyado.com/api/swagger-ui#/tracking/Cart_RegisterCarts\"\u003eDocumentation reference\u003c/a\u003e",
         "enablingConditions": [
           {
             "paramName": "type",
@@ -251,7 +263,7 @@ ___TEMPLATE_PARAMETERS___
             ]
           }
         ],
-        "help": "\u003cb\u003eContactId\u003c/b\u003e will be provided automaticaly.\nRegister a view of a specific product for a given contact. \u003ca href\u003d\"https://voyadodemoecom.voyado.com/api/v2/ui/index#/tracking/ProductViewV_RegisterProductView\"\u003eDocumentation reference\u003c/a\u003e",
+        "help": "\u003cb\u003eContactId\u003c/b\u003e will be provided automatically.\u003cbr/\u003eRegister a view of a specific product for a given contact.\u003cbr/\u003e\u003ca href\u003d\"https://voyadodemoecom.voyado.com/api/swagger-ui#/tracking/ProductView_RegisterProductViews\"\u003eDocumentation reference\u003c/a\u003e",
         "enablingConditions": [
           {
             "paramName": "type",
@@ -279,75 +291,123 @@ ___TEMPLATE_PARAMETERS___
             "selectItems": [
               {
                 "value": "orderNumber",
-                "displayValue": "orderNumber"
+                "displayValue": "orderId"
               },
               {
                 "value": "orderStatus",
-                "displayValue": "orderStatus"
+                "displayValue": "status"
               },
               {
                 "value": "paymentStatus",
-                "displayValue": "paymentStatus"
+                "displayValue": "paymentStatus (removed, no v3 equivalent)"
               },
               {
                 "value": "language",
-                "displayValue": "language"
+                "displayValue": "language (removed, no v3 equivalent)"
               },
               {
                 "value": "createdDate",
-                "displayValue": "createdDate"
+                "displayValue": "createdAt"
               },
               {
                 "value": "shippingDate",
-                "displayValue": "shippingDate"
+                "displayValue": "delivery.deliveryDate"
               },
               {
                 "value": "statusChangedDate",
-                "displayValue": "statusChangedDate"
+                "displayValue": "lastChangedAt"
               },
               {
                 "value": "storeId",
-                "displayValue": "storeId"
+                "displayValue": "externalStoreId"
               },
               {
                 "value": "currency",
-                "displayValue": "currency"
+                "displayValue": "currencyCode"
               },
               {
                 "value": "exchangeRateToGroupCurrency",
-                "displayValue": "exchangeRateToGroupCurrency"
+                "displayValue": "exchangeRateToGroupCurrency (removed, no v3 equivalent)"
               },
               {
                 "value": "extraData",
-                "displayValue": "extraData"
+                "displayValue": "extraData (removed, no v3 equivalent)"
               },
               {
                 "value": "totalGrossPrice",
-                "displayValue": "totalGrossPrice"
+                "displayValue": "totalPrice"
               },
               {
                 "value": "totalTax",
-                "displayValue": "totalTax"
+                "displayValue": "taxes.totalTax"
               },
               {
                 "value": "paymentMethods",
-                "displayValue": "paymentMethods"
+                "displayValue": "paymentMethods (removed, use payments instead)"
               },
               {
                 "value": "items",
-                "displayValue": "items"
+                "displayValue": "items (removed, use lineItems instead)"
               },
               {
                 "value": "freightFee",
-                "displayValue": "freightFee"
+                "displayValue": "freightFee (removed, use fees instead)"
               },
               {
                 "value": "handlingFee",
-                "displayValue": "handlingFee"
+                "displayValue": "handlingFee (removed, use fees instead)"
               },
               {
                 "value": "totalRoundOff",
-                "displayValue": "totalRoundOff"
+                "displayValue": "totalRoundOff (removed, no v3 equivalent)"
+              },
+              {
+                "value": "externalStatus",
+                "displayValue": "externalStatus"
+              },
+              {
+                "value": "references",
+                "displayValue": "references"
+              },
+              {
+                "value": "channel",
+                "displayValue": "channel"
+              },
+              {
+                "value": "lineItems",
+                "displayValue": "lineItems"
+              },
+              {
+                "value": "payments",
+                "displayValue": "payments"
+              },
+              {
+                "value": "fees",
+                "displayValue": "fees"
+              },
+              {
+                "value": "discounts",
+                "displayValue": "discounts"
+              },
+              {
+                "value": "delivery",
+                "displayValue": "delivery"
+              },
+              {
+                "value": "billingAddress",
+                "displayValue": "billingAddress"
+              },
+              {
+                "value": "deliveryAddress",
+                "displayValue": "deliveryAddress"
+              },
+              {
+                "value": "taxes",
+                "displayValue": "taxes"
+              },
+              {
+                "value": "orderAction",
+                "displayValue": "orderAction"
               }
             ],
             "isUnique": true,
@@ -369,7 +429,7 @@ ___TEMPLATE_PARAMETERS___
             ]
           }
         ],
-        "help": "The \u003cb\u003econtact\u003c/b\u003e field will be provided automatically.\nRegister a new order or an update to an existing order. \u003ca href\u003d\"https://voyadodemoecom.voyado.com/api/v2/ui/index#/orders/Orders_RegisterOrder\"\u003eDocumentation reference\u003c/a\u003e",
+        "help": "\u003cb\u003econtact\u003c/b\u003e will be provided automatically.\u003cbr/\u003eRegister a new order or an update to an existing order.\u003cbr/\u003e\u003cbr/\u003eFields marked \u003ci\u003eremoved\u003c/i\u003e below are no longer sent: some have no replacement, others are replaced by lineItems, payments, or fees, which need their own correctly-shaped value.\u003cbr/\u003e\u003cbr/\u003e\u003ca href\u003d\"https://voyadodemoecom.voyado.com/api/swagger-ui#/orders/Orders_Post\"\u003eDocumentation reference\u003c/a\u003e",
         "enablingConditions": [
           {
             "paramName": "type",
@@ -438,7 +498,7 @@ const setCookie = require('setCookie');
 
 /*==============================================================================
 ==============================================================================*/
-
+const API_VERSION = 'v3';
 const eventData = getAllEventData();
 
 if (!isConsentGivenOrNotRequired(data, eventData)) {
@@ -450,15 +510,17 @@ identify(data.type === 'identify')
     if (data.type === 'trackCartChanges') {
       const cartModel = data.cartModel ? makeTableMap(data.cartModel, 'property', 'value') : {};
       cartModel.ContactId = contactId;
-      sendEvent('/tracking/carts', cartModel);
+      sendEvent('/tracking/carts', [cartModel]);
     } else if (data.type === 'trackProductView') {
       const productViewApiModel = data.productViewApiModel
         ? makeTableMap(data.productViewApiModel, 'property', 'value')
         : {};
       productViewApiModel.ContactId = contactId;
-      sendEvent('/tracking/productview', productViewApiModel);
+      sendEvent('/tracking/productviews', [productViewApiModel]);
     } else if (data.type === 'trackPurchase') {
-      const orderModel = data.orderModel ? makeTableMap(data.orderModel, 'property', 'value') : {};
+      const orderModel = data.orderModel
+        ? mapOrderModelFields(makeTableMap(data.orderModel, 'property', 'value'))
+        : {};
       orderModel.contact = {
         matchKey: contactId,
         matchKeyType: 'ContactId'
@@ -510,7 +572,8 @@ function identify(force) {
 
 function getContactId(email) {
   return Promise.create((resolve, reject) => {
-    const requestUrl = data.baseURL + '/api/v2/contacts/id?email=' + encodeUriComponent(email);
+    const requestUrl =
+      data.baseURL + '/api/' + API_VERSION + '/contacts/id?email=' + encodeUriComponent(email);
     sendHttpRequest(
       requestUrl,
       (statusCode, headers, body) => {
@@ -519,7 +582,7 @@ function getContactId(email) {
           storeCookie('_vaI', contactId);
           resolve(contactId);
         } else if (statusCode === 409) {
-          const data = JSON.parse(body);
+          const data = JSON.parse(body || '{}');
           if (
             data &&
             data.messageDetails &&
@@ -541,12 +604,12 @@ function getContactId(email) {
 
 function createContact(email) {
   return Promise.create((resolve, reject) => {
-    const requestUrl = data.baseURL + '/api/v2/contacts';
+    const requestUrl = data.baseURL + '/api/' + API_VERSION + '/contacts';
     sendHttpRequest(
       requestUrl,
       (statusCode, headers, body) => {
         if (statusCode >= 200 && statusCode < 300) {
-          const contactId = fixContactId(JSON.parse(body).id);
+          const contactId = fixContactId(JSON.parse(body || '{}').id);
           storeCookie('_vaI', contactId);
           resolve(contactId);
         } else {
@@ -573,8 +636,52 @@ function fixContactId(contactId) {
   return contactId.replace(regex, '');
 }
 
+function mapOrderModelFields(orderModel) {
+  const ORDER_FIELD_MAP = {
+    orderNumber: 'orderId',
+    orderStatus: 'status',
+    createdDate: 'createdAt',
+    statusChangedDate: 'lastChangedAt',
+    storeId: 'externalStoreId',
+    currency: 'currencyCode',
+    totalGrossPrice: 'totalPrice',
+    shippingDate: 'delivery.deliveryDate',
+    totalTax: 'taxes.totalTax'
+  };
+  const REMOVED_FIELDS = {
+    paymentStatus: true,
+    language: true,
+    paymentMethods: true,
+    items: true,
+    freightFee: true,
+    handlingFee: true,
+    totalRoundOff: true,
+    exchangeRateToGroupCurrency: true,
+    extraData: true
+  };
+  const mapped = {};
+  for (const key in orderModel) {
+    if (orderModel.hasOwnProperty(key) && !REMOVED_FIELDS[key]) {
+      setNestedValue(mapped, ORDER_FIELD_MAP[key] || key, orderModel[key]);
+    }
+  }
+  return mapped;
+}
+
+function setNestedValue(target, path, value) {
+  const segments = path.split('.');
+  let current = target;
+  for (let i = 0; i < segments.length - 1; i++) {
+    if (!current[segments[i]]) {
+      current[segments[i]] = {};
+    }
+    current = current[segments[i]];
+  }
+  current[segments[segments.length - 1]] = value;
+}
+
 function sendEvent(path, voyadoEventData) {
-  let url = data.baseURL + '/api/v2' + path;
+  let url = data.baseURL + '/api/' + API_VERSION + path;
   sendHttpRequest(
     url,
     (statusCode, headers, body) => {
@@ -623,6 +730,7 @@ function isConsentGivenOrNotRequired(data, eventData) {
   const xGaGcs = eventData['x-ga-gcs'] || ''; // x-ga-gcs is a string like "G110"
   return xGaGcs[2] === '1';
 }
+
 
 
 ___SERVER_PERMISSIONS___
@@ -872,13 +980,353 @@ ___SERVER_PERMISSIONS___
 
 ___TESTS___
 
-scenarios: []
+scenarios:
+- name: '[Consent] Blocks execution and skips request when required consent is not given'
+  code: |-
+    const scenarioMockData = createMockData({ adStorageConsent: 'required' });
+
+    mock('getAllEventData', () => ({}));
+    mock('sendHttpRequest', () => {
+      fail('sendHttpRequest should not be called when consent is not given');
+    });
+
+    runCode(scenarioMockData);
+
+    callLater(() => {
+      assertApi('sendHttpRequest').wasNotCalled();
+      assertApi('gtmOnSuccess').wasCalled();
+      assertApi('gtmOnFailure').wasNotCalled();
+    });
+- name: '[Track Cart] Sends array wrapped payload to the v3 carts endpoint with the resolved contact id'
+  code: |-
+    const scenarioMockData = createMockData({
+      type: 'trackCartChanges',
+      cartModel: [
+        { property: 'CartReference', value: 'cart-123' },
+        { property: 'Url', value: 'https://shop.example.com/cart' }
+      ]
+    });
+
+    mock('sendHttpRequest', (url, callback, options, body) => {
+      assertThat(url).isEqualTo('https://client.voyado.com/api/v3/tracking/carts');
+      assertThat(options.method).isEqualTo('POST');
+      const payload = JSON.parse(body);
+      assertThat(payload).isEqualTo([
+        {
+          CartReference: 'cart-123',
+          Url: 'https://shop.example.com/cart',
+          ContactId: 'existing-contact-id'
+        }
+      ]);
+      callback(200, {}, '');
+    });
+
+    runCode(scenarioMockData);
+
+    callLater(() => {
+      assertApi('sendHttpRequest').wasCalled();
+      assertApi('gtmOnSuccess').wasCalled();
+      assertApi('gtmOnFailure').wasNotCalled();
+    });
+- name: '[Track Product View] Sends array wrapped payload to the v3 productviews endpoint'
+  code: |-
+    const scenarioMockData = createMockData({
+      type: 'trackProductView',
+      productViewApiModel: [
+        { property: 'ItemId', value: 'sku-1' },
+        { property: 'Category', value: 'Sweaters' }
+      ]
+    });
+
+    mock('sendHttpRequest', (url, callback, options, body) => {
+      assertThat(url).isEqualTo('https://client.voyado.com/api/v3/tracking/productviews');
+      const payload = JSON.parse(body);
+      assertThat(payload).isEqualTo([
+        {
+          ItemId: 'sku-1',
+          Category: 'Sweaters',
+          ContactId: 'existing-contact-id'
+        }
+      ]);
+      callback(200, {}, '');
+    });
+
+    runCode(scenarioMockData);
+
+    callLater(() => {
+      assertApi('sendHttpRequest').wasCalled();
+      assertApi('gtmOnSuccess').wasCalled();
+      assertApi('gtmOnFailure').wasNotCalled();
+    });
+- name: '[Track Purchase] Maps legacy order fields to their v3 equivalents including nested paths'
+  code: |-
+    const scenarioMockData = createMockData({
+      type: 'trackPurchase',
+      orderModel: [
+        { property: 'orderNumber', value: 'ORD-1' },
+        { property: 'orderStatus', value: 'InProgress' },
+        { property: 'createdDate', value: '2026-01-01T00:00:00Z' },
+        { property: 'statusChangedDate', value: '2026-01-02T00:00:00Z' },
+        { property: 'storeId', value: 'store-1' },
+        { property: 'currency', value: 'EUR' },
+        { property: 'totalGrossPrice', value: 100 },
+        { property: 'shippingDate', value: '2026-01-03T00:00:00Z' },
+        { property: 'totalTax', value: 20 }
+      ]
+    });
+
+    mock('sendHttpRequest', (url, callback, options, body) => {
+      assertThat(url).isEqualTo('https://client.voyado.com/api/v3/orders');
+      const payload = JSON.parse(body);
+      assertThat(payload).isEqualTo({
+        orderId: 'ORD-1',
+        status: 'InProgress',
+        createdAt: '2026-01-01T00:00:00Z',
+        lastChangedAt: '2026-01-02T00:00:00Z',
+        externalStoreId: 'store-1',
+        currencyCode: 'EUR',
+        totalPrice: 100,
+        delivery: { deliveryDate: '2026-01-03T00:00:00Z' },
+        taxes: { totalTax: 20 },
+        contact: { matchKey: 'existing-contact-id', matchKeyType: 'ContactId' }
+      });
+      callback(200, {}, '');
+    });
+
+    runCode(scenarioMockData);
+
+    callLater(() => {
+      assertApi('sendHttpRequest').wasCalled();
+      assertApi('gtmOnSuccess').wasCalled();
+      assertApi('gtmOnFailure').wasNotCalled();
+    });
+- name: '[Track Purchase] Drops order fields with no v3 equivalent from the payload'
+  code: |-
+    const scenarioMockData = createMockData({
+      type: 'trackPurchase',
+      orderModel: [
+        { property: 'orderNumber', value: 'ORD-1' },
+        { property: 'paymentStatus', value: 'Paid' },
+        { property: 'language', value: 'sv-SE' },
+        { property: 'paymentMethods', value: 'card' },
+        { property: 'items', value: [{ Sku: 'sku-1', Quantity: 1 }] },
+        { property: 'freightFee', value: 10 },
+        { property: 'handlingFee', value: 5 },
+        { property: 'totalRoundOff', value: 0.5 },
+        { property: 'exchangeRateToGroupCurrency', value: 1.1 },
+        { property: 'extraData', value: 'note' }
+      ]
+    });
+
+    mock('sendHttpRequest', (url, callback, options, body) => {
+      const payload = JSON.parse(body);
+      assertThat(payload).isEqualTo({
+        orderId: 'ORD-1',
+        contact: { matchKey: 'existing-contact-id', matchKeyType: 'ContactId' }
+      });
+      callback(200, {}, '');
+    });
+
+    runCode(scenarioMockData);
+
+    callLater(() => {
+      assertApi('sendHttpRequest').wasCalled();
+      assertApi('gtmOnSuccess').wasCalled();
+      assertApi('gtmOnFailure').wasNotCalled();
+    });
+- name: '[Identify] Uses contact id from vtid query parameter and skips network lookup'
+  code: |-
+    const scenarioMockData = createMockData({
+      type: 'trackCartChanges',
+      cartModel: [{ property: 'CartReference', value: 'cart-1' }]
+    });
+
+    mock('getAllEventData', () => ({ page_location: 'https://shop.example.com/checkout?vtid=vtid-contact-id' }));
+
+    let storedCookieValue = null;
+    mock('setCookie', (name, value) => {
+      storedCookieValue = value;
+    });
+    mock('sendHttpRequest', (url, callback, options, body) => {
+      const payload = JSON.parse(body);
+      assertThat(payload[0].ContactId).isEqualTo('vtid-contact-id');
+      callback(200, {}, '');
+    });
+
+    runCode(scenarioMockData);
+
+    callLater(() => {
+      assertThat(storedCookieValue).isEqualTo('vtid-contact-id');
+      assertApi('gtmOnSuccess').wasCalled();
+      assertApi('gtmOnFailure').wasNotCalled();
+    });
+- name: '[Identify] Resolves contact id via the v3 lookup endpoint by email'
+  code: |-
+    const scenarioMockData = createMockData({
+      type: 'trackCartChanges',
+      email: 'shopper@example.com',
+      cartModel: [{ property: 'CartReference', value: 'cart-1' }]
+    });
+
+    mock('getAllEventData', () => ({}));
+    mock('getCookieValues', () => []);
+
+    let requestCount = 0;
+    mock('sendHttpRequest', (url, callback, options, body) => {
+      requestCount = requestCount + 1;
+      if (requestCount === 1) {
+        assertThat(url).isEqualTo('https://client.voyado.com/api/v3/contacts/id?email=shopper%40example.com');
+        callback(200, {}, '"looked-up-id"');
+      } else {
+        const payload = JSON.parse(body);
+        assertThat(payload[0].ContactId).isEqualTo('looked-up-id');
+        callback(200, {}, '');
+      }
+    });
+
+    runCode(scenarioMockData);
+
+    callLater(() => {
+      assertThat(requestCount).isEqualTo(2);
+      assertApi('gtmOnSuccess').wasCalled();
+      assertApi('gtmOnFailure').wasNotCalled();
+    });
+- name: '[Identify] Resolves the first id from a multiple matches conflict response'
+  code: |-
+    const scenarioMockData = createMockData({
+      type: 'trackCartChanges',
+      cartModel: [{ property: 'CartReference', value: 'cart-1' }]
+    });
+
+    mock('getAllEventData', () => ({}));
+    mock('getCookieValues', () => []);
+
+    let requestCount = 0;
+    mock('sendHttpRequest', (url, callback, options, body) => {
+      requestCount = requestCount + 1;
+      if (requestCount === 1) {
+        callback(409, {}, JSON.stringify({ messageDetails: { multipleMatchesFound: ['match-1', 'match-2'] } }));
+      } else {
+        const payload = JSON.parse(body);
+        assertThat(payload[0].ContactId).isEqualTo('match-1');
+        callback(200, {}, '');
+      }
+    });
+
+    runCode(scenarioMockData);
+
+    callLater(() => {
+      assertThat(requestCount).isEqualTo(2);
+      assertApi('gtmOnSuccess').wasCalled();
+      assertApi('gtmOnFailure').wasNotCalled();
+    });
+- name: '[Identify] Creates a new v3 contact when the lookup finds no match'
+  code: |-
+    const scenarioMockData = createMockData({
+      type: 'trackCartChanges',
+      email: 'newshopper@example.com',
+      cartModel: [{ property: 'CartReference', value: 'cart-1' }]
+    });
+
+    mock('getAllEventData', () => ({}));
+    mock('getCookieValues', () => []);
+
+    let requestCount = 0;
+    mock('sendHttpRequest', (url, callback, options, body) => {
+      requestCount = requestCount + 1;
+      if (requestCount === 1) {
+        callback(404, {}, '');
+      } else if (requestCount === 2) {
+        assertThat(url).isEqualTo('https://client.voyado.com/api/v3/contacts');
+        assertThat(options.method).isEqualTo('POST');
+        assertThat(JSON.parse(body)).isEqualTo({ email: 'newshopper@example.com' });
+        callback(201, {}, '{"id":"new-contact-id"}');
+      } else {
+        const payload = JSON.parse(body);
+        assertThat(payload[0].ContactId).isEqualTo('new-contact-id');
+        callback(200, {}, '');
+      }
+    });
+
+    runCode(scenarioMockData);
+
+    callLater(() => {
+      assertThat(requestCount).isEqualTo(3);
+      assertApi('gtmOnSuccess').wasCalled();
+      assertApi('gtmOnFailure').wasNotCalled();
+    });
+- name: '[Identify] Fails when no email, cookie, or vtid is available'
+  code: |-
+    const scenarioMockData = createMockData({ email: undefined });
+
+    mock('getAllEventData', () => ({}));
+    mock('getCookieValues', () => []);
+    mock('sendHttpRequest', () => {
+      fail('sendHttpRequest should not be called without an email to identify the contact');
+    });
+
+    runCode(scenarioMockData);
+
+    callLater(() => {
+      assertApi('sendHttpRequest').wasNotCalled();
+      assertApi('gtmOnSuccess').wasNotCalled();
+      assertApi('gtmOnFailure').wasCalled();
+    });
+- name: '[Optimistic Scenario] Calls gtmOnSuccess immediately without waiting for the response'
+  code: |-
+    const scenarioMockData = createMockData({
+      type: 'trackCartChanges',
+      useOptimisticScenario: true,
+      cartModel: [{ property: 'CartReference', value: 'cart-1' }]
+    });
+
+    mock('sendHttpRequest', () => {});
+
+    runCode(scenarioMockData);
+
+    callLater(() => {
+      assertApi('sendHttpRequest').wasCalled();
+      assertApi('gtmOnSuccess').wasCalled();
+      assertApi('gtmOnFailure').wasNotCalled();
+    });
+setup: |-
+  const JSON = require('JSON');
+  const callLater = require('callLater');
+
+  const createMockData = (overrides) => {
+    const base = {
+      type: 'trackCartChanges',
+      baseURL: 'https://client.voyado.com',
+      apikey: 'test-api-key',
+      email: 'contact@example.com',
+      adStorageConsent: 'optional'
+    };
+    for (const key in overrides) {
+      if (overrides.hasOwnProperty(key)) {
+        base[key] = overrides[key];
+      }
+    }
+    return base;
+  };
+
+  mock('getAllEventData', () => ({}));
+  mock('getCookieValues', () => ['existing-contact-id']);
+  mock('getRequestHeader', () => undefined);
+  mock('setCookie', () => {});
 
 
 ___NOTES___
+
+2026-09-21 - Change Notes:
+  - BREAKING CHANGES WERE INTRODUCED: REVIEW THE "TRACK PURCHASE" PARAMETERS OF EVERY CONFIGURED TAG BEFORE RELEASING THIS UPDATE TO PRODUCTION - some order fields are now dropped from the request instead of being sent (see the Order Model field list for which ones), and require the new replacement fields (lineItems, payments, fees, etc.) to keep sending that data
+  - Bump the Voyado API from v2 to v3 across all endpoints (contacts lookup/creation, tracking, orders)
+  - /tracking/carts and /tracking/productviews requests now send arrays to support v3's multi-item batching; add new cart tracking fields (SessionId, NewSession, ExternalReferrer)
+  - Keep order model field selections backward compatible where possible: fields with a direct v3 equivalent are auto-translated (including nested paths like totalTax and shippingDate), and new v3-only fields (lineItems, delivery, billingAddress, deliveryAddress, payments, fees, discounts, taxes, channel, externalStatus, references, orderAction) are added to the picklist
+  - Update in-UI documentation links and help text, and add unit test coverage for consent gating, tracking payloads, order field mapping/removal, and the identify flow
 
 2026-05-25 Change Notes:
  - Logging removal.
 
 Created on 28/07/2023, 15:15:15
+
 

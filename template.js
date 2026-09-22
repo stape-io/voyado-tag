@@ -14,6 +14,7 @@ const setCookie = require('setCookie');
 /*==============================================================================
 ==============================================================================*/
 
+const API_VERSION = 'v3';
 const eventData = getAllEventData();
 
 if (!isConsentGivenOrNotRequired(data, eventData)) {
@@ -25,15 +26,17 @@ identify(data.type === 'identify')
     if (data.type === 'trackCartChanges') {
       const cartModel = data.cartModel ? makeTableMap(data.cartModel, 'property', 'value') : {};
       cartModel.ContactId = contactId;
-      sendEvent('/tracking/carts', cartModel);
+      sendEvent('/tracking/carts', [cartModel]);
     } else if (data.type === 'trackProductView') {
       const productViewApiModel = data.productViewApiModel
         ? makeTableMap(data.productViewApiModel, 'property', 'value')
         : {};
       productViewApiModel.ContactId = contactId;
-      sendEvent('/tracking/productview', productViewApiModel);
+      sendEvent('/tracking/productviews', [productViewApiModel]);
     } else if (data.type === 'trackPurchase') {
-      const orderModel = data.orderModel ? makeTableMap(data.orderModel, 'property', 'value') : {};
+      const orderModel = data.orderModel
+        ? mapOrderModelFields(makeTableMap(data.orderModel, 'property', 'value'))
+        : {};
       orderModel.contact = {
         matchKey: contactId,
         matchKeyType: 'ContactId'
@@ -85,7 +88,8 @@ function identify(force) {
 
 function getContactId(email) {
   return Promise.create((resolve, reject) => {
-    const requestUrl = data.baseURL + '/api/v2/contacts/id?email=' + encodeUriComponent(email);
+    const requestUrl =
+      data.baseURL + '/api/' + API_VERSION + '/contacts/id?email=' + encodeUriComponent(email);
     sendHttpRequest(
       requestUrl,
       (statusCode, headers, body) => {
@@ -94,7 +98,7 @@ function getContactId(email) {
           storeCookie('_vaI', contactId);
           resolve(contactId);
         } else if (statusCode === 409) {
-          const data = JSON.parse(body);
+          const data = JSON.parse(body || '{}');
           if (
             data &&
             data.messageDetails &&
@@ -116,12 +120,12 @@ function getContactId(email) {
 
 function createContact(email) {
   return Promise.create((resolve, reject) => {
-    const requestUrl = data.baseURL + '/api/v2/contacts';
+    const requestUrl = data.baseURL + '/api/' + API_VERSION + '/contacts';
     sendHttpRequest(
       requestUrl,
       (statusCode, headers, body) => {
         if (statusCode >= 200 && statusCode < 300) {
-          const contactId = fixContactId(JSON.parse(body).id);
+          const contactId = fixContactId(JSON.parse(body || '{}').id);
           storeCookie('_vaI', contactId);
           resolve(contactId);
         } else {
@@ -148,8 +152,52 @@ function fixContactId(contactId) {
   return contactId.replace(regex, '');
 }
 
+function mapOrderModelFields(orderModel) {
+  const ORDER_FIELD_MAP = {
+    orderNumber: 'orderId',
+    orderStatus: 'status',
+    createdDate: 'createdAt',
+    statusChangedDate: 'lastChangedAt',
+    storeId: 'externalStoreId',
+    currency: 'currencyCode',
+    totalGrossPrice: 'totalPrice',
+    shippingDate: 'delivery.deliveryDate',
+    totalTax: 'taxes.totalTax'
+  };
+  const REMOVED_FIELDS = {
+    paymentStatus: true,
+    language: true,
+    paymentMethods: true,
+    items: true,
+    freightFee: true,
+    handlingFee: true,
+    totalRoundOff: true,
+    exchangeRateToGroupCurrency: true,
+    extraData: true
+  };
+  const mapped = {};
+  for (const key in orderModel) {
+    if (orderModel.hasOwnProperty(key) && !REMOVED_FIELDS[key]) {
+      setNestedValue(mapped, ORDER_FIELD_MAP[key] || key, orderModel[key]);
+    }
+  }
+  return mapped;
+}
+
+function setNestedValue(target, path, value) {
+  const segments = path.split('.');
+  let current = target;
+  for (let i = 0; i < segments.length - 1; i++) {
+    if (!current[segments[i]]) {
+      current[segments[i]] = {};
+    }
+    current = current[segments[i]];
+  }
+  current[segments[segments.length - 1]] = value;
+}
+
 function sendEvent(path, voyadoEventData) {
-  let url = data.baseURL + '/api/v2' + path;
+  let url = data.baseURL + '/api/' + API_VERSION + path;
   sendHttpRequest(
     url,
     (statusCode, headers, body) => {
